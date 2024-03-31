@@ -1,0 +1,30 @@
+{
+  "name": "gatsby-remark-relative-linker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src --out-dir . --ignore **/*.spec.js",
+    "watch": "babel -w src --out-dir . --ignore **/*.spec.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/runtime": "^7.24.1",
+    "unist-util-visit": "^2.0.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.24.1",
+    "@babel/core": "^7.24.3",
+    "babel-preset-gatsby-package": "^3.13.1",
+    "jest": "^29.7.0"
+  },
+  "peerDependencies": {
+    "gatsby": "^5.13.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
