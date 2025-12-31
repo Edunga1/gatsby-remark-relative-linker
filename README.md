@@ -18,3 +18,5 @@ Add this plugin to your `gatsby-config` file:
 ```
 
 Note that the converted links may not look as expected based on [slugify](https://www.gatsbyjs.com/docs/creating-slugs-for-pages/) policies.
+
+TODO: Respect `trailingSlash` option in `gatsby-config`.
