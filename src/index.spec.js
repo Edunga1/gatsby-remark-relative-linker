@@ -16,7 +16,7 @@ describe("Processing markdown links", () => {
     linker(tree)
 
     expect(tree).toBeDefined()
-    expect(tree.markdownAST.children.at(-1).url).toBe("../example")
+    expect(tree.markdownAST.children.at(-1).url).toBe("../example/")
   })
 
   it("should keep the hash part of the link", async () => {
@@ -25,7 +25,7 @@ describe("Processing markdown links", () => {
     linker(tree)
 
     expect(tree).toBeDefined()
-    expect(tree.markdownAST.children.at(-1).url).toBe("../example#section")
+    expect(tree.markdownAST.children.at(-1).url).toBe("../example/#section")
   })
 })
 
