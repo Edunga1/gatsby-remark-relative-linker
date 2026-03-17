@@ -1,15 +1,11 @@
 import visit from "unist-util-visit"
 
-export default function({ markdownAST }, { trailingSlash = true } = {}) {
+export default function({ markdownAST }) {
   visit(markdownAST, "link", node => {
     if (isRelativeLink(node.url)) {
-      node.url = node.url.replace(/.*\/(.+)\.md(#.*)?.*$/, (match, _, hash) => {
-        const hashStr = hash || ""
-        const basePath = hashStr ? match.slice(0, -hashStr.length - 3) : match.slice(0, -3)
-        const path = trailingSlash && basePath.startsWith(".")
-          ? "../" + basePath.replace(/^\.\//, "")
-          : basePath
-        return path + hashStr
+      node.url = node.url.replace(/.*\/(.+)\.md(#.*)?.*$/, (_, base, hash) => {
+        const trailingSlash = base.endsWith("/") ? "" : "/"
+        return `../${base}${trailingSlash}${hash || ""}`
       })
     }
   })

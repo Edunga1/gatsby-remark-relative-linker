@@ -11,13 +11,12 @@ Add this plugin to your `gatsby-config` file:
   resolve: "gatsby-transformer-remark",
   options: {
     plugins: [
-      {
-        resolve: "gatsby-remark-relative-linker",
-        options: {
-          trailingSlash: true, // default: true
-        },
-      },
+      "gatsby-remark-relative-linker",
     ]
   }
 }
 ```
+
+Note that the converted links may not look as expected based on [slugify](https://www.gatsbyjs.com/docs/creating-slugs-for-pages/) policies.
+
+TODO: Respect `trailingSlash` option in `gatsby-config`.
