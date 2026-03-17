@@ -3,17 +3,10 @@ import visit from "unist-util-visit"
 export default function({ markdownAST }, { trailingSlash = true } = {}) {
   visit(markdownAST, "link", node => {
     if (isRelativeLink(node.url)) {
-      const hashIndex = node.url.indexOf("#")
-      const hash = hashIndex !== -1 ? node.url.slice(hashIndex) : ""
-      const linkPath = hashIndex !== -1 ? node.url.slice(0, hashIndex) : node.url
-      const withoutExt = linkPath.replace(/\.md$/, "")
-
-      if (trailingSlash) {
-        const segments = ["..", ...withoutExt.split("/")].filter(s => s !== ".")
-        node.url = segments.join("/") + hash
-      } else {
-        node.url = withoutExt + hash
-      }
+      node.url = node.url.replace(/.*\/(.+)\.md(#.*)?.*$/, (_, base, hash) => {
+        const slash = trailingSlash && !base.endsWith("/") ? "/" : ""
+        return `../${base}${slash}${hash || ""}`
+      })
     }
   })
 
@@ -21,5 +14,5 @@ export default function({ markdownAST }, { trailingSlash = true } = {}) {
 }
 
 function isRelativeLink(url) {
-  return url && /^\.\.?\/.*\.md(#.*)?$/.test(url)
+  return url && url.match(/.*\/(.+)\.md(#.*)?/)
 }
