@@ -2,7 +2,7 @@ import { describe, expect, it } from "@jest/globals"
 import linker from "./index"
 
 describe("Processing markdown AST", () => {
-  it("should return the AST", async () => {
+  it("should return the AST", () => {
     const tree = createTree()
     const result = linker(tree)
     expect(result).toBe(tree.markdownAST)
@@ -10,75 +10,44 @@ describe("Processing markdown AST", () => {
 })
 
 describe("Processing markdown links", () => {
-  it("should replace the relative link with a relative path", async () => {
+  it.each([
+    [true, "./bar.md", "../bar"],
+    [true, "../baz.md", "../../baz"],
+    [true, "./bar/baz.md", "../bar/baz"],
+    [true, "./deeply/nested/path.md", "../deeply/nested/path"],
+    [true, "./bar.md#section", "../bar#section"],
+    [true, "../baz.md#heading", "../../baz#heading"],
+    [true, "/foo/bar/baz.md", "/foo/bar/baz"],
+    [true, "/foo/bar/baz.md#section", "/foo/bar/baz#section"],
+    [false, "./bar.md", "./bar"],
+    [false, "../baz.md", "../baz"],
+    [false, "./bar/baz.md", "./bar/baz"],
+    [false, "./bar.md#section", "./bar#section"],
+    [false, "/foo/bar/baz.md", "/foo/bar/baz"],
+    [false, "/foo/bar/baz.md#section", "/foo/bar/baz#section"],
+  ])("trailingSlash=%s: %s → %s", (trailingSlash, link, expected) => {
     const tree = createTree()
-    addLinkNode(tree, "./relative/path/example.md")
-    linker(tree)
+    addLinkNode(tree, link)
+    linker(tree, { trailingSlash })
 
-    expect(tree).toBeDefined()
-    expect(tree.markdownAST.children.at(-1).url).toBe("../example/")
-  })
-
-  it("should keep the hash part of the link", async () => {
-    const tree = createTree()
-    addLinkNode(tree, "./relative/path/example.md#section")
-    linker(tree)
-
-    expect(tree).toBeDefined()
-    expect(tree.markdownAST.children.at(-1).url).toBe("../example/#section")
-  })
-})
-
-describe("Respecting trailingSlash option", () => {
-  it("should add trailing slash when trailingSlash is true", async () => {
-    const tree = createTree()
-    addLinkNode(tree, "./relative/path/example.md")
-    linker(tree, { trailingSlash: true })
-
-    expect(tree.markdownAST.children.at(-1).url).toBe("../example/")
-  })
-
-  it("should not add trailing slash when trailingSlash is false", async () => {
-    const tree = createTree()
-    addLinkNode(tree, "./relative/path/example.md")
-    linker(tree, { trailingSlash: false })
-
-    expect(tree.markdownAST.children.at(-1).url).toBe("../example")
-  })
-
-  it("should not add trailing slash with hash when trailingSlash is false", async () => {
-    const tree = createTree()
-    addLinkNode(tree, "./relative/path/example.md#section")
-    linker(tree, { trailingSlash: false })
-
-    expect(tree.markdownAST.children.at(-1).url).toBe("../example#section")
-  })
-
-  it("should default to true when trailingSlash is not specified", async () => {
-    const tree = createTree()
-    addLinkNode(tree, "./relative/path/example.md")
-    linker(tree)
-
-    expect(tree.markdownAST.children.at(-1).url).toBe("../example/")
+    expect(tree.markdownAST.children.at(-1).url).toBe(expected)
   })
 })
 
 describe("Processing non-markdown links", () => {
-  it("should not replace the link without .md extension", async () => {
+  it("should not replace the link without .md extension", () => {
     const tree = createTree()
     addLinkNode(tree, "./example")
     linker(tree)
 
-    expect(tree).toBeDefined()
     expect(tree.markdownAST.children.at(-1).url).toBe("./example")
   })
 
-  it("should not replace the http link", async () => {
+  it("should not replace the http link", () => {
     const tree = createTree()
     addLinkNode(tree, "https://example.com")
     linker(tree)
 
-    expect(tree).toBeDefined()
     expect(tree.markdownAST.children.at(-1).url).toBe("https://example.com")
   })
 })
