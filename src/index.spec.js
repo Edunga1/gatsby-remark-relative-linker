@@ -29,6 +29,40 @@ describe("Processing markdown links", () => {
   })
 })
 
+describe("Respecting trailingSlash option", () => {
+  it("should add trailing slash when trailingSlash is true", async () => {
+    const tree = createTree()
+    addLinkNode(tree, "./relative/path/example.md")
+    linker(tree, { trailingSlash: true })
+
+    expect(tree.markdownAST.children.at(-1).url).toBe("../example/")
+  })
+
+  it("should not add trailing slash when trailingSlash is false", async () => {
+    const tree = createTree()
+    addLinkNode(tree, "./relative/path/example.md")
+    linker(tree, { trailingSlash: false })
+
+    expect(tree.markdownAST.children.at(-1).url).toBe("../example")
+  })
+
+  it("should not add trailing slash with hash when trailingSlash is false", async () => {
+    const tree = createTree()
+    addLinkNode(tree, "./relative/path/example.md#section")
+    linker(tree, { trailingSlash: false })
+
+    expect(tree.markdownAST.children.at(-1).url).toBe("../example#section")
+  })
+
+  it("should default to true when trailingSlash is not specified", async () => {
+    const tree = createTree()
+    addLinkNode(tree, "./relative/path/example.md")
+    linker(tree)
+
+    expect(tree.markdownAST.children.at(-1).url).toBe("../example/")
+  })
+})
+
 describe("Processing non-markdown links", () => {
   it("should not replace the link without .md extension", async () => {
     const tree = createTree()
@@ -84,4 +118,3 @@ function addLinkNode(tree, link) {
     url: link,
   })
 }
-
