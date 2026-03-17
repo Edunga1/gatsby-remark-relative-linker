@@ -21,3 +21,23 @@ Add this plugin to your `gatsby-config` file:
   }
 }
 ```
+
+## Options
+
+### `trailingSlash` (default: `true`)
+
+Indicates whether the current page URL has a trailing slash, which determines how relative link prefixes are resolved.
+
+- `true`: Adds an extra `../` level to the resolved path (for pages served with trailing slash).
+- `false`: Keeps the original relative path structure as-is.
+
+| trailingSlash | Input | Output |
+|---|---|---|
+| `true` | `./bar.md` | `../bar` |
+| `true` | `../baz.md` | `../../baz` |
+| `true` | `./bar/baz.md` | `../bar/baz` |
+| `true` | `./bar.md#section` | `../bar#section` |
+| `false` | `./bar.md` | `./bar` |
+| `false` | `../baz.md` | `../baz` |
+| `false` | `./bar/baz.md` | `./bar/baz` |
+| `false` | `./bar.md#section` | `./bar#section` |
