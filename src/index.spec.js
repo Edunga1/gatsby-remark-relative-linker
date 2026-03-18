@@ -9,43 +9,17 @@ describe("Processing markdown AST", () => {
   })
 })
 
-describe("Processing markdown links", () => {
-  it("should replace the relative link with a relative path", async () => {
+describe("Processing links", () => {
+  it.each([
+    ["./relative/path/example.md",         "../example/"],
+    ["./relative/path/example.md#section", "../example/#section"],
+    ["./example",                 "./example"],
+    ["https://example.com",       "https://example.com"],
+  ])("%s → %s", (input, expected) => {
     const tree = createTree()
-    addLinkNode(tree, "./relative/path/example.md")
+    addLinkNode(tree, input)
     linker(tree)
-
-    expect(tree).toBeDefined()
-    expect(tree.markdownAST.children.at(-1).url).toBe("../example/")
-  })
-
-  it("should keep the hash part of the link", async () => {
-    const tree = createTree()
-    addLinkNode(tree, "./relative/path/example.md#section")
-    linker(tree)
-
-    expect(tree).toBeDefined()
-    expect(tree.markdownAST.children.at(-1).url).toBe("../example/#section")
-  })
-})
-
-describe("Processing non-markdown links", () => {
-  it("should not replace the link without .md extension", async () => {
-    const tree = createTree()
-    addLinkNode(tree, "./example")
-    linker(tree)
-
-    expect(tree).toBeDefined()
-    expect(tree.markdownAST.children.at(-1).url).toBe("./example")
-  })
-
-  it("should not replace the http link", async () => {
-    const tree = createTree()
-    addLinkNode(tree, "https://example.com")
-    linker(tree)
-
-    expect(tree).toBeDefined()
-    expect(tree.markdownAST.children.at(-1).url).toBe("https://example.com")
+    expect(tree.markdownAST.children.at(-1).url).toBe(expected)
   })
 })
 
