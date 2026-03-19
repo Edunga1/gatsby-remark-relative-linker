@@ -17,6 +17,11 @@ Add this plugin to your `gatsby-config` file:
 }
 ```
 
-Note that the converted links may not look as expected based on [slugify](https://www.gatsbyjs.com/docs/creating-slugs-for-pages/) policies.
+This plugin respects the [`trailingSlash`](https://www.gatsbyjs.com/docs/reference/config-files/gatsby-config/#trailingslash) option in `gatsby-config`:
 
-TODO: Respect `trailingSlash` option in `gatsby-config`.
+| trailingSlash | Input | Output |
+|---|---|---|
+| `"always"` (default) | `./path/example.md` | `../example/` |
+| `"never"` | `./path/example.md` | `example` |
+
+Note that the converted links may not look as expected based on [slugify](https://www.gatsbyjs.com/docs/creating-slugs-for-pages/) policies.
